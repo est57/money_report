@@ -17,6 +17,9 @@ Money Report is a comprehensive personal finance management application built wi
 - **Budgeting**: Set a monthly budget and track your progress.
 - **Categories**: Manage custom categories with icons and colors.
 - **Reports**: Generate detailed PDF reports and view statistics.
+- [x] Verify `README.md` content <!-- id: 35 -->
+
+
 - **Daily Reminders**: Get notified to record your transactions every day.
 - **Biometric Lock**: Secure your data with fingerprint/face unlock.
 - **Backup & Restore**: Export your data to JSON and restore it on any device.
@@ -51,7 +54,7 @@ lib/
 1.  **Prerequisites**: Ensure you have Flutter SDK installed.
 2.  **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/money_report.git
+    git clone https://github.com/est57/money_report.git
     ```
 3.  **Install dependencies**:
     ```bash

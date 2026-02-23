@@ -1,10 +1,10 @@
-import 'package:hugeicons/hugeicons.dart';
+                        import 'package:hugeicons/hugeicons.dart';
 
 class IconRegistry {
   static final Map<String, dynamic> iconMap = {
     'food': HugeIcons.strokeRoundedRestaurant01,
     'transport': HugeIcons.strokeRoundedBus01,
-    'shopping': HugeIcons.strokeRoundedShoppingBag01,
+    'shopping': HugeIcons.strokeRoundedShoppingBag01,             
     'bills': HugeIcons.strokeRoundedInvoice01,
     'entertainment': HugeIcons.strokeRoundedVideo01,
     'health': HugeIcons.strokeRoundedHospital01,

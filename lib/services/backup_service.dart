@@ -6,12 +6,18 @@ import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import '../providers/transaction_provider.dart';
 import '../providers/settings_provider.dart';
+import '../providers/category_provider.dart';
 
 class BackupService {
   final TransactionProvider transactionProvider;
   final SettingsProvider settingsProvider;
+  final CategoryProvider categoryProvider;
 
-  BackupService(this.transactionProvider, this.settingsProvider);
+  BackupService(
+    this.transactionProvider,
+    this.settingsProvider,
+    this.categoryProvider,
+  );
 
   Future<void> exportData() async {
     try {
@@ -21,6 +27,10 @@ class BackupService {
           .toList();
       final recurring = transactionProvider.recurringTransactions
           .map((tx) => tx.toMap())
+          .toList();
+
+      final categories = categoryProvider.categories
+          .map((cat) => cat.toMap())
           .toList();
 
       final settings = {
@@ -35,6 +45,7 @@ class BackupService {
         'settings': settings,
         'transactions': transactions,
         'recurring_transactions': recurring,
+        'categories': categories,
       };
 
       // 2. Convert to JSON
@@ -86,6 +97,11 @@ class BackupService {
           settingsProvider.setMonthlyBudget(
             settings['monthlyBudget']?.toDouble() ?? 0.0,
           );
+        }
+
+        // Import Categories if available (for backward compatibility if old backups don't have it)
+        if (data.containsKey('categories')) {
+          await categoryProvider.importData(data['categories']);
         }
       }
     } catch (e) {

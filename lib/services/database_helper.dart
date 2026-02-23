@@ -21,7 +21,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'money_report.db');
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: (db, version) async {
         await _createTransactionsTable(db);
         await _createRecurringTransactionsTable(db);
@@ -35,6 +35,11 @@ class DatabaseHelper {
         if (oldVersion < 3) {
           await _createCategoriesTable(db);
           await _seedDefaultCategories(db);
+        }
+        if (oldVersion < 4) {
+          await db.execute(
+            'ALTER TABLE categories ADD COLUMN budget REAL DEFAULT 0.0',
+          );
         }
       },
     );
@@ -74,7 +79,8 @@ class DatabaseHelper {
         name TEXT,
         type TEXT,
         iconKey TEXT,
-        color INTEGER
+        color INTEGER,
+        budget REAL DEFAULT 0.0
       )
     ''');
   }
@@ -283,5 +289,10 @@ class DatabaseHelper {
     // We typically don't delete categories on "Reset Data" unless requested,
     // but if it's "Factory Reset" maybe.
     // For now, let's keep categories.
+  }
+
+  Future<void> deleteAllCategories() async {
+    final db = await database;
+    await db.delete('categories');
   }
 }

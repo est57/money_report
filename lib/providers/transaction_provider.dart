@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/transaction_model.dart';
 import '../services/database_helper.dart';
 
@@ -231,5 +232,88 @@ class TransactionProvider with ChangeNotifier {
       }
     }
     return stats;
+  }
+
+  // Cashflow Trend Grouping Methods
+
+  List<Map<String, dynamic>> getDailyTrends(DateTime month) {
+    int daysInMonth = DateTime(month.year, month.month + 1, 0).day;
+    List<Map<String, dynamic>> trends = [];
+
+    for (int i = 1; i <= daysInMonth; i++) {
+      double income = 0;
+      double expense = 0;
+      for (var tx in _transactions) {
+        if (tx.date.year == month.year &&
+            tx.date.month == month.month &&
+            tx.date.day == i) {
+          if (tx.isExpense) {
+            expense += tx.amount;
+          } else {
+            income += tx.amount;
+          }
+        }
+      }
+      trends.add({'label': '$i', 'income': income, 'expense': expense});
+    }
+    return trends;
+  }
+
+  List<Map<String, dynamic>> getWeeklyTrends(DateTime month) {
+    List<Map<String, dynamic>> trends = [
+      {'label': 'W1', 'income': 0.0, 'expense': 0.0},
+      {'label': 'W2', 'income': 0.0, 'expense': 0.0},
+      {'label': 'W3', 'income': 0.0, 'expense': 0.0},
+      {'label': 'W4', 'income': 0.0, 'expense': 0.0},
+    ];
+
+    for (var tx in _transactions) {
+      if (tx.date.year == month.year && tx.date.month == month.month) {
+        int day = tx.date.day;
+        int weekIndex = 0;
+        if (day <= 7) {
+          weekIndex = 0;
+        } else if (day <= 14) {
+          weekIndex = 1;
+        } else if (day <= 21) {
+          weekIndex = 2;
+        } else {
+          weekIndex = 3;
+        }
+
+        if (tx.isExpense) {
+          trends[weekIndex]['expense'] =
+              (trends[weekIndex]['expense'] as double) + tx.amount;
+        } else {
+          trends[weekIndex]['income'] =
+              (trends[weekIndex]['income'] as double) + tx.amount;
+        }
+      }
+    }
+    return trends;
+  }
+
+  List<Map<String, dynamic>> getMonthlyTrends(int year) {
+    List<Map<String, dynamic>> trends = List.generate(12, (index) {
+      return {
+        'label': DateFormat('MMM').format(DateTime(year, index + 1)),
+        'income': 0.0,
+        'expense': 0.0,
+      };
+    });
+
+    for (var tx in _transactions) {
+      if (tx.date.year == year) {
+        int monthIndex = tx.date.month - 1;
+        if (tx.isExpense) {
+          trends[monthIndex]['expense'] =
+              (trends[monthIndex]['expense'] as double) + tx.amount;
+        } else {
+          trends[monthIndex]['income'] =
+              (trends[monthIndex]['income'] as double) + tx.amount;
+        }
+      }
+    }
+    return trends;
   }
 }

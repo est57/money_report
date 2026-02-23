@@ -43,4 +43,25 @@ class CategoryProvider with ChangeNotifier {
   dynamic getIcon(String key) {
     return IconRegistry.getIcon(key);
   }
+
+  Future<void> importData(List<dynamic> backupCategories) async {
+    // 1. Wipe existing categories to ensure a clean restore
+    await _dbHelper.deleteAllCategories();
+
+    // 2. Insert backed up categories
+    for (var catMap in backupCategories) {
+      final original = CategoryModel.fromMap(catMap);
+      final newCat = CategoryModel(
+        name: original.name,
+        type: original.type,
+        iconKey: original.iconKey,
+        color: original.color,
+        budget: original.budget,
+      );
+      await _dbHelper.insertCategory(newCat);
+    }
+
+    // 3. Refresh Provider State
+    await fetchCategories();
+  }
 }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../providers/transaction_provider.dart';
 import '../providers/settings_provider.dart';
+import '../providers/category_provider.dart';
 import '../services/backup_service.dart';
 import '../utils/theme.dart';
 
@@ -25,7 +26,15 @@ class _BackupScreenState extends State<BackupScreen> {
       context,
       listen: false,
     );
-    _backupService = BackupService(txProvider, settingsProvider);
+    final categoryProvider = Provider.of<CategoryProvider>(
+      context,
+      listen: false,
+    );
+    _backupService = BackupService(
+      txProvider,
+      settingsProvider,
+      categoryProvider,
+    );
   }
 
   Future<void> _handleBackup() async {
@@ -48,19 +57,46 @@ class _BackupScreenState extends State<BackupScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Restore Data Warning'),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          'Restore Data Warning',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: const Text(
           'Restoring data will DELETE all existing transactions and settings locally and replace them with the backup file.\n\nThis action cannot be undone. Are you sure?',
+          style: TextStyle(height: 1.5),
         ),
+        actionsPadding: const EdgeInsets.only(right: 16, bottom: 16),
         actions: [
           TextButton(
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white70
+                    : Colors.grey.shade700,
+              ),
+            ),
             onPressed: () => Navigator.pop(ctx, false),
           ),
-          TextButton(
+          const SizedBox(width: 8),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
             child: const Text(
               'Proceed Restore',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             onPressed: () => Navigator.pop(ctx, true),
           ),

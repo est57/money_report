@@ -117,10 +117,10 @@ class NotificationService {
         id: id,
         title: title,
         body: body,
-        scheduledDate: _nextInstance(time),
+        scheduledDate: _nextInstance(time),                       
         notificationDetails: const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'daily_reminder_channel_v2',
+          android: AndroidNotificationDetails(                                                                                  
+            'daily_reminder_channel_v2',                                                                                                          
             'Daily Reminder',
             channelDescription: 'Daily reminder to record transactions',
             importance: Importance.max,

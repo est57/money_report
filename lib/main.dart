@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(
           create: (_) => CategoryProvider()..fetchCategories(),
+          lazy: false,
         ),
       ],
       child: Consumer<SettingsProvider>(

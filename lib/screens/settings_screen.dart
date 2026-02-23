@@ -7,6 +7,8 @@ import 'recurring_transactions_screen.dart';
 import 'backup_screen.dart';
 import 'manage_categories_screen.dart';
 import '../services/biometric_service.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'version_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -166,13 +168,28 @@ class SettingsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               _buildSectionHeader('About', context),
-              _buildSettingsItem(
-                context: context,
-                icon: HugeIcons.strokeRoundedInformationCircle,
-                color: Colors.blue,
-                title: 'Version',
-                trailingText: '1.0.0',
-                onTap: () {},
+              FutureBuilder<PackageInfo>(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) {
+                  String versionText = 'Loading...';
+                  if (snapshot.hasData) {
+                    versionText = '${snapshot.data!.version}';
+                  }
+                  return _buildSettingsItem(
+                    context: context,
+                    icon: HugeIcons.strokeRoundedInformationCircle,
+                    color: Colors.blue,
+                    title: 'Version',
+                    trailingText: versionText,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const VersionScreen(),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

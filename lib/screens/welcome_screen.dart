@@ -20,7 +20,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Colors.white, // Changed to white
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -33,25 +33,31 @@ class WelcomeScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Theme.of(
+                    context,
+                  ).primaryColor.withOpacity(0.1), // Changed to light teal
                   shape: BoxShape.circle,
                 ),
-                child: const HugeIcon(
+                child: HugeIcon(
                   icon: HugeIcons.strokeRoundedWallet02,
-                  color: Colors.white,
+                  color: Theme.of(
+                    context,
+                  ).primaryColor, // Changed to primary color
                   size: 80,
                 ),
               ),
               const SizedBox(height: 48),
 
               // Title
-              const Text(
+              Text(
                 'Money Report',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Theme.of(
+                    context,
+                  ).primaryColor, // Changed to primary color
                   letterSpacing: 1.2,
                 ),
               ),
@@ -63,7 +69,7 @@ class WelcomeScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.grey[700], // Changed to grey
                   height: 1.5,
                 ),
               ),
@@ -73,8 +79,10 @@ class WelcomeScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () => _completeOnboarding(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).primaryColor, // Changed to primary color
+                  foregroundColor: Colors.white, // Changed to white
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),

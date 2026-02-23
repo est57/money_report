@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -8,6 +9,7 @@ import '../providers/transaction_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/category_provider.dart';
 import '../utils/theme.dart';
+import '../utils/currency_input_formatter.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   final TransactionModel? transaction;
@@ -31,7 +33,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     if (widget.transaction != null) {
       final tx = widget.transaction!;
       _titleController.text = tx.title;
-      _amountController.text = tx.amount.toString();
+      final formatter = NumberFormat.currency(
+        locale: 'id_ID',
+        symbol: '',
+        decimalDigits: 0,
+      );
+      _amountController.text = formatter.format(tx.amount).trim();
       _selectedDate = tx.date;
       _isExpense = tx.isExpense;
 
@@ -76,7 +83,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
 
     final enteredTitle = _titleController.text;
-    final enteredAmount = double.tryParse(_amountController.text);
+    final cleanAmountString = _amountController.text.replaceAll(
+      RegExp(r'[^0-9]'),
+      '',
+    );
+    final enteredAmount = double.tryParse(cleanAmountString);
 
     if (enteredAmount == null || enteredAmount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -229,6 +240,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                               child: TextField(
                                 controller: _amountController,
                                 keyboardType: TextInputType.number,
+                                inputFormatters: [CurrencyInputFormatter()],
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 40,

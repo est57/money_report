@@ -4,6 +4,7 @@ import 'package:hugeicons/hugeicons.dart';
 import '../providers/category_provider.dart';
 import '../models/category_model.dart';
 import '../utils/theme.dart';
+import 'package:intl/intl.dart';
 import 'add_edit_category_screen.dart';
 
 class ManageCategoriesScreen extends StatefulWidget {
@@ -131,6 +132,11 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen>
               cat.name,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
+            subtitle: cat.budget > 0
+                ? Text(
+                    'Budget: ${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0).format(cat.budget)}',
+                  )
+                : null,
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

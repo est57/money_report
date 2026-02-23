@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
 import '../providers/category_provider.dart';
+import '../providers/settings_provider.dart';
 import '../models/category_model.dart';
 import '../utils/theme.dart';
 import '../utils/icon_registry.dart';
+import '../utils/currency_input_formatter.dart';
 
 class AddEditCategoryScreen extends StatefulWidget {
   final CategoryModel? category;
@@ -22,6 +26,7 @@ class AddEditCategoryScreen extends StatefulWidget {
 
 class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> {
   final _nameController = TextEditingController();
+  final _budgetController = TextEditingController();
   late String _selectedIconKey;
   late int _selectedColor;
   late String _selectedType;
@@ -55,6 +60,16 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> {
       _selectedIconKey = widget.category!.iconKey;
       _selectedColor = widget.category!.color;
       _selectedType = widget.category!.type;
+      if (widget.category!.budget > 0) {
+        final formatter = NumberFormat.currency(
+          locale: 'id_ID',
+          symbol: '',
+          decimalDigits: 0,
+        );
+        _budgetController.text = formatter
+            .format(widget.category!.budget)
+            .trim();
+      }
     } else {
       _selectedIconKey = 'other';
       _selectedColor = _colors[0];
@@ -65,6 +80,7 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _budgetController.dispose();
     super.dispose();
   }
 
@@ -82,6 +98,11 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> {
       type: _selectedType,
       iconKey: _selectedIconKey,
       color: _selectedColor,
+      budget:
+          double.tryParse(
+            _budgetController.text.replaceAll(RegExp(r'[^0-9]'), ''),
+          ) ??
+          0.0,
     );
 
     final provider = Provider.of<CategoryProvider>(context, listen: false);
@@ -95,6 +116,8 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = Provider.of<SettingsProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -131,6 +154,38 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> {
               ),
             ),
             const SizedBox(height: 20),
+
+            if (_selectedType == 'Expense') ...[
+              TextField(
+                controller: _budgetController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [CurrencyInputFormatter()],
+                decoration: InputDecoration(
+                  labelText: 'Monthly Budget (Optional)',
+                  hintText: 'e.g. 500000',
+                  border: const OutlineInputBorder(),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    child: Text(
+                      settings.currencySymbol,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ),
+                  prefixIconConstraints: const BoxConstraints(
+                    minWidth: 0,
+                    minHeight: 0,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
 
             // Color Picker
             const Text(

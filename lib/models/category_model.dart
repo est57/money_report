@@ -4,6 +4,7 @@ class CategoryModel {
   final String type; // 'Income' or 'Expense'
   final String iconKey;
   final int color; // Store color as int (ARGB)
+  final double budget; // 0.0 means no budget set
 
   CategoryModel({
     this.id,
@@ -11,6 +12,7 @@ class CategoryModel {
     required this.type,
     required this.iconKey,
     required this.color,
+    this.budget = 0.0,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class CategoryModel {
       'type': type,
       'iconKey': iconKey,
       'color': color,
+      'budget': budget,
     };
   }
 
@@ -30,6 +33,7 @@ class CategoryModel {
       type: map['type'],
       iconKey: map['iconKey'],
       color: map['color'],
+      budget: map['budget'] ?? 0.0,
     );
   }
 }
